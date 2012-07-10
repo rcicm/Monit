@@ -35,7 +35,7 @@ $ mysql -u mmonit mmonit -p < db/mmonit-schema.mysql
 </pre>
 
 
-h3. Setting M/Monit to use MySQL:
+h3. Setting M/Monit to use MySQL (see the file sample.server.xml):
 
 Change the file "conf/server.xml", commenting the sqlite entry, and uncommenting the MySQL entry:
 <pre>
