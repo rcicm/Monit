@@ -39,7 +39,7 @@ $ mkdir /opt/monit/monit.d/
 </pre>
 
 
-h3. Configuring:
+h3. Configuring (see the sample file "sample.monitrc"):
 
 Change te file "/etc/monitrc" adding the lines below:
 <pre>
@@ -54,7 +54,7 @@ include /opt/monit/monit.d/*
 </code>
 </pre>
 
-In the same file, comment the lines below (because were not using pam and ssl): 
+In the same file, change the following lines:
 <pre>
 <code>
 set httpd port 2812 and
@@ -65,16 +65,15 @@ set httpd port 2812 and
 </code>
 </pre>
 
-And finally, change the following lines:
+And finally, comment the lines below (because were not using pam and ssl): 
 <pre>
-<code>
-#    allow @monit           # allow users of group 'monit' to connect (rw)
+<code>#    allow @monit           # allow users of group 'monit' to connect (rw)
 #    allow @users readonly  # allow users of group 'users' to connect readonly
 </code>
 </pre>
 
 
-h3. Creating a basic monitor to an apache server:
+h3. Creating a basic monitor to an apache server (See the sample file "sample.include.apache"):
 
 Inside the directory set in the "include" section at "/etc/monitrc" (in our case "/opt/monit/monit.d/"), create a new file:
 <pre>
@@ -98,7 +97,7 @@ group server
 </pre>
 
 
-h3. Starting the monit daeon:
+h3. Starting the monit daemon:
 <pre>
 <code>
 $ ./monit -d 60
