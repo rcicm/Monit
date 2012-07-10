@@ -1,0 +1,96 @@
+h1. How to compile and install M/Monit at CentOs
+
+Reference: http://mmonit.com/
+
+h3. Downloading Packages:
+
+M/Monit - http://mmonit.com/download/
+
+
+h3. Unpacking:
+
+<pre>
+<code>
+$ tar -xzvf mmonit-2.4-linux-x64.tar.gz
+</code>
+</pre>
+
+
+h3. Configuring the Database:
+
+<pre>
+<code>
+# Entering in the Monit directory
+$ cd mmonit-2.4
+
+# Creating the database (MySQL)
+$ mysqladmin create mmonit -u root -p
+
+# Create the mmonit user and grant access to the mmonit database
+mysql> GRANT ALL ON mmonit.* to mmonit@localhost identified by 'Adm4monit'
+
+# Create the schema
+$ mysql -u mmonit mmonit -p < db/mmonit-schema.mysql
+</code>
+</pre>
+
+
+h3. Setting M/Monit to use MySQL:
+
+Change the file "conf/server.xml", commenting the sqlite entry, and uncommenting the MySQL entry:
+<pre>
+<code>
+           <Realm url="mysql://127.0.0.1:3306/mmonit?user=mmonit&password=XXXXXXXX"
+                  minConnections="5"
+                  maxConnections="25"
+                  unix-socket="/PATH_TO_YOUR_SOCK/mysql.sock"
+                  reapConnections="300" />
+</code>
+</pre>
+
+
+h3. Starting:
+
+<pre>
+<code>
+$ bin/mmonit
+</code>
+</pre>
+
+
+h3. Accessing:
+
+Access in your browser:
+http://127.0.0.1:8080/
+user: admin
+pass: swordfish
+
+
+h3. Change the clients:
+
+Change the "/etc/monitrc" (on the clients) to sent events to mmonit:
+
+<pre>
+<code>
+ set eventqueue
+     basedir /var/monit  # set the base directory where events will be stored
+     slots 100           # optionally limit the queue size
+
+...
+
+ set mmonit http://monit:monit@[YOUR_MMONIT_IP]:8080/collector
+</code>
+</pre>
+
+Reload the Monit client
+<pre>
+<code>
+$ /opt/monit/bin/monit reload
+</code>
+</pre>
+
+
+h2. Author:
+
+Rafael Inocencio <rafael_rci@yahoo.com.br>
+https://github.com/rcicm

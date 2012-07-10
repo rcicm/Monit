@@ -1,0 +1,112 @@
+h1. How to compile and install Monit at CentOs
+
+Reference: http://mmonit.com/
+
+h3. Downloading Packages:
+
+Monit - http://mmonit.com/monit/download/
+
+
+h3. Unpacking:
+
+<pre>
+<code>
+$ tar -xzvf monit-5.4.tar.gz
+</code>
+</pre>
+
+
+h3. Installing:
+
+<pre>
+<code>
+# Entering in the Monit directory
+$ cd monit-5.4
+
+# Run the configure setting the prefix path and disabling PAM and SSL
+$ ./configure --prefix=/opt/monit --without-pam --without-ssl
+
+$ make
+
+$ make install 
+
+#Creating the log directory (if you want to change it)
+$ mkdir /opt/monit/logs/
+
+#Creating the monitors directory
+$ mkdir /opt/monit/monit.d/
+</code>
+</pre>
+
+
+h3. Configuring:
+
+Change te file "/etc/monitrc" adding the lines below:
+<pre>
+<code>
+set logfile /opt/monit/logs/monit.log
+
+set mailserver smtp.mydomain.com,
+
+set alert yourmail@mydomain.com only on { timeout }
+
+include /opt/monit/monit.d/*
+</code>
+</pre>
+
+In the same file, comment the lines below (because were not using pam and ssl): 
+<pre>
+<code>
+set httpd port 2812 and
+   use address 10.249.1.112  # IP Listen of the internal server
+   allow 10.249.1.112        # allow localhost to connect to the server (enable use of "./monit status"),
+   allow 10.2.0.0/16         # allow net 10.2.0.0/16 to connect to the server and
+   allow admin:monit         # require user 'admin' with password 'monit'
+</code>
+</pre>
+
+And finally, change the following lines:
+<pre>
+<code>
+#    allow @monit           # allow users of group 'monit' to connect (rw)
+#    allow @users readonly  # allow users of group 'users' to connect readonly
+</code>
+</pre>
+
+
+h3. Creating a basic monitor to an apache server:
+
+Inside the directory set in the "include" section at "/etc/monitrc" (in our case "/opt/monit/monit.d/"), create a new file:
+<pre>
+<code>
+$ vim /opt/monit/monit.d/apache
+</code>
+</pre>
+
+In this file, insert the following lines:
+<pre>
+<code>
+check process apache with pidfile /opt/apache2.4.2/logs/httpd.pid
+ start program = "/opt/apache2.4.2/bin/apachectl start" with timeout 60 seconds
+ stop program  = "/opt/apache2.4.2/bin/apachectl stop"
+ if failed host 10.249.1.112 port 80 protocol http 
+    and request "/healthcheck.html"
+    then restart
+    if 3 restarts within 20 cycles then alert
+group server
+</code>
+</pre>
+
+
+h3. Starting the monit daeon:
+<pre>
+<code>
+$ ./monit -d 60
+</code>
+</pre>
+
+
+h2. Author:
+
+Rafael Inocencio <rafael_rci@yahoo.com.br>
+https://github.com/rcicm
