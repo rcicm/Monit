@@ -50,8 +50,8 @@ In the same file, change the following lines:
    allow admin:monit         # require user 'admin' with password 'monit'</code></pre>
 
 And finally, comment the lines below (because were not using pam and ssl): 
-<pre><code>#    allow @monit           # allow users of group 'monit' to connect (rw)
- ##    allow @users readonly  # allow users of group 'users' to connect readonly</code></pre>
+<pre><code># allow @monit           # allow users of group 'monit' to connect (rw)
+# allow @users readonly  # allow users of group 'users' to connect readonly</code></pre>
 
 
 h3. Creating a basic monitor to an apache server (See the sample file "sample.include.apache"):
